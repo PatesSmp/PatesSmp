@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PatesSMP | Survival Multiplayer (1.21.1)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Piksel Başlıklar ve Modern Gövde Fontu -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome İkonları -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        /**
+         * ============================================================================
+         *  PATESSMP SUNUCU AYARLARI (IP ADRESİNİ BURADAN KOLAYCA DEĞİŞTİREBİLİRSİN)
+         * ============================================================================
+         *  Mango Host veya yeni bir IP'ye geçtiğinde sadece aşağıdaki `serverIP`
+         *  kısmını değiştirmen yeterlidir. Tüm sayfadaki IP kutuları otomatik güncellenir.
+         */
+        const SERVER_CONFIG = {
+            serverName: "PATES SMP",
+            serverSubtitle: "SURVIVAL MULTIPLAYER",
+            serverIP: "PatesSmpOyna.aternos.me", // <-- YENİ IP ADRESİNİ BURAYA YAZABİLİRSİN
+            serverStartUrl: "", // <-- İsteğe bağlı özel başlatma/durum bağlantısı (boş bırakılırsa hesap girişine yönlendirmez)
+            serverVersion: "1.21.1 Java (PaperMC)",
+            discordInvite: "https://discord.gg/", // <-- Discord davet linkini buraya yapıştır
+            logoFileName: "logo.png"              // <-- Klasöre koyacağın logo dosyasının adı
+        };
+
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        pixel: ['"Silkscreen"', 'cursive'],
+                        sans: ['"Outfit"', 'sans-serif'],
+                    },
+                    colors: {
+                        brickDark: '#16191f',
+                        brickBase: '#1e222a',
+                        brickLight: '#282d37',
+                        patesGold: '#f5b942',
+                        patesGoldDark: '#b87d14',
+                        patesEmerald: '#4ade80',
+                        patesDiamond: '#38bdf8',
+                        patesCrust: '#d99b52',
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        /* Logodaki Koyu Taş Tuğla Arka Plan Dokusu */
+        body {
+            background-color: #16191f;
+            background-image: 
+                linear-gradient(335deg, rgba(20, 23, 29, 0.92) 23px, transparent 23px),
+                linear-gradient(155deg, rgba(20, 23, 29, 0.92) 23px, transparent 23px),
+                linear-gradient(335deg, rgba(28, 32, 40, 0.85) 23px, transparent 23px),
+                linear-gradient(155deg, rgba(28, 32, 40, 0.85) 23px, transparent 23px);
+            background-size: 58px 58px;
+            background-position: 0px 2px, 4px 35px, 29px 31px, 34px 6px;
+            color: #f1f5f9;
+        }
+
+        /* Minecraft / Piksel Kart Çerçeve Efekti */
+        .mc-card {
+            background: rgba(30, 34, 42, 0.92);
+            backdrop-filter: blur(8px);
+            border: 2px solid #333946;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .mc-card:hover {
+            transform: translateY(-4px);
+            border-color: #f5b942;
+            box-shadow: 0 14px 30px -5px rgba(245, 185, 66, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        /* Altın Buton Stili */
+        .btn-gold {
+            background: linear-gradient(180deg, #ffd166 0%, #f5b942 50%, #d99116 100%);
+            color: #1a1204;
+            border-bottom: 4px solid #966106;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+            transition: all 0.15s ease;
+        }
+
+        .btn-gold:hover {
+            filter: brightness(1.07);
+            transform: translateY(-1px);
+        }
+
+        .btn-gold:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
+
+        /* Elmas Buton Stili */
+        .btn-diamond {
+            background: linear-gradient(180deg, #7dd3fc 0%, #38bdf8 50%, #0284c7 100%);
+            color: #082032;
+            border-bottom: 4px solid #0369a1;
+            transition: all 0.15s ease;
+        }
+
+        .btn-diamond:hover {
+            filter: brightness(1.08);
+            transform: translateY(-1px);
+        }
+
+        .btn-diamond:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
+
+        /* Zümrüt Sunucu Başlat Buton Stili */
+        .btn-emerald {
+            background: linear-gradient(180deg, #86efac 0%, #4ade80 50%, #16a34a 100%);
+            color: #052e16;
+            border-bottom: 4px solid #15803d;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+            transition: all 0.15s ease;
+        }
+
+        .btn-emerald:hover {
+            filter: brightness(1.07);
+            transform: translateY(-1px);
+        }
+
+        .btn-emerald:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
+
+        /* Logo Çerçeve Parlaması */
+        .logo-ring {
+            box-shadow: 0 0 0 6px #282d37, 0 0 0 10px #f5b942, 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 40px rgba(245, 185, 66, 0.25);
+        }
+
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .animate-float {
+            animation: floatSlow 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-patesGold selection:text-brickDark">
+
+    <!-- Bildirim Kutusu (Toast) -->
+    <div id="toastNotification" class="fixed bottom-6 right-6 z-50 hidden transform transition-all duration-300 translate-y-4 opacity-0">
+        <div class="flex items-center gap-3 bg-brickBase border-2 border-patesEmerald text-white px-5 py-3.5 rounded-xl shadow-2xl">
+            <div class="w-8 h-8 rounded-lg bg-patesEmerald/20 text-patesEmerald flex items-center justify-center">
+                <i class="fa-solid fa-check text-lg"></i>
+            </div>
+            <div>
+                <p id="toastTitle" class="font-bold text-sm text-patesEmerald">IP Adresi Kopyalandı!</p>
+                <p id="toastMessage" class="text-xs text-slate-300">Minecraft'ta Sunucu Ekle kısmına yapıştırabilirsin.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ÜST MENÜ (NAVBAR) -->
+    <header class="sticky top-0 z-40 bg-brickDark/90 backdrop-blur-md border-b-2 border-brickLight">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Sol: Logo + Sunucu Adı -->
+                <a href="#anasayfa" class="flex items-center gap-3 group">
+                    <div class="w-12 h-12 rounded-full border-2 border-patesGold overflow-hidden bg-brickLight flex items-center justify-center shadow-md group-hover:scale-105 transition">
+                        <img src="logo.png" alt="PatesSMP Logo" class="site-logo w-full h-full object-cover" onerror="handleLogoFallback(this)">
+                    </div>
+                    <div>
+                        <span class="font-pixel text-lg sm:text-xl font-bold text-patesGold tracking-wider block leading-none">PATES SMP</span>
+                        <span class="text-[11px] font-semibold text-patesDiamond tracking-widest uppercase">1.21.1 Survival</span>
+                    </div>
+                </a>
+
+                <!-- Orta: Masaüstü Navigasyon -->
+                <nav class="hidden md:flex items-center gap-7 text-sm font-semibold text-slate-300">
+                    <a href="#anasayfa" class="hover:text-patesGold transition">Ana Sayfa</a>
+                    <a href="#ozellikler" class="hover:text-patesGold transition">Özellikler</a>
+                    <a href="#rutbeler" class="hover:text-patesGold transition">Rütbeler & Yetkililer</a>
+                    <a href="#kurallar" class="hover:text-patesGold transition">Kurallar</a>
+                    <a href="https://www.youtube.com/@PatesSmp" target="_blank" rel="noopener noreferrer" class="text-red-400 hover:text-red-300 transition flex items-center gap-1.5 font-bold">
+                        <i class="fa-brands fa-youtube text-base"></i> Kanalımıza Abone Ol
+                    </a>
+                </nav>
+
+                <!-- Sağ: Hızlı IP Kopyala & Mobil Menü Butonu -->
+                <div class="flex items-center gap-3">
+                    <button onclick="copyServerIP()" class="btn-gold px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-copy"></i>
+                        <span class="hidden sm:inline">IP Kopyala</span>
+                        <span class="sm:hidden">Oyna</span>
+                    </button>
+                    <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="md:hidden p-2.5 rounded-xl bg-brickLight text-slate-200 hover:text-patesGold border border-slate-700">
+                        <i class="fa-solid fa-bars text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobil Açılır Menü -->
+        <div id="mobileMenu" class="hidden md:hidden bg-brickBase border-b-2 border-brickLight px-4 pt-2 pb-5 space-y-2">
+            <a href="#anasayfa" onclick="toggleMobileMenu()" class="block px-3 py-2.5 rounded-lg text-slate-200 hover:bg-brickLight hover:text-patesGold font-medium">Ana Sayfa</a>
+            <a href="#ozellikler" onclick="toggleMobileMenu()" class="block px-3 py-2.5 rounded-lg text-slate-200 hover:bg-brickLight hover:text-patesGold font-medium">Sunucu Özellikleri</a>
+            <a href="#rutbeler" onclick="toggleMobileMenu()" class="block px-3 py-2.5 rounded-lg text-slate-200 hover:bg-brickLight hover:text-patesGold font-medium">Rütbeler & Yetkili Kadrosu</a>
+            <a href="#kurallar" onclick="toggleMobileMenu()" class="block px-3 py-2.5 rounded-lg text-slate-200 hover:bg-brickLight hover:text-patesGold font-medium">Sunucu Kuralları</a>
+            <a href="https://www.youtube.com/@PatesSmp" target="_blank" rel="noopener noreferrer" onclick="toggleMobileMenu()" class="block px-3 py-2.5 rounded-lg text-red-400 bg-red-500/10 hover:bg-red-500/20 font-semibold">
+                <i class="fa-brands fa-youtube mr-2"></i> Kanalımıza Abone Ol
+            </a>
+        </div>
+    </header>
+
+    <!-- HERO BÖLÜMÜ (ANA KARŞILAMA) -->
+    <section id="anasayfa" class="relative pt-12 pb-20 sm:pt-16 sm:pb-28 overflow-hidden">
+        <!-- Arka Plan Dekoratif Parlamalar -->
+        <div class="absolute top-10 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-patesGold/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-0 right-10 w-72 h-72 bg-patesDiamond/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center relative z-10">
+            <!-- Sunucu Durum Rozeti -->
+            <div class="inline-flex items-center gap-2.5 bg-brickBase/90 border border-slate-700 px-4 py-1.5 rounded-full mb-8 shadow-lg">
+                <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-patesEmerald animate-pulse"></span>
+                <span id="statusText" class="text-xs sm:text-sm font-semibold text-slate-200">Sunucu Durumu Kontrol Ediliyor...</span>
+                <span class="text-slate-600">|</span>
+                <span id="displayVersion" class="text-xs font-bold text-patesDiamond">1.21.1 Java</span>
+            </div>
+
+            <!-- Merkez Logo Alanı -->
+            <div class="relative inline-block mb-8 animate-float">
+                <div class="w-44 h-44 sm:w-56 sm:h-56 mx-auto rounded-full logo-ring overflow-hidden bg-brickBase flex items-center justify-center">
+                    <img src="logo.png" alt="PatesSMP Resmi Logo" class="site-logo w-full h-full object-cover" onerror="handleLogoFallback(this)">
+                </div>
+                <!-- Yerel Logo Önizleme Yükleyicisi (Kullanıcı kendi bilgisayarında hemen test edebilsin diye) -->
+                <label title="Logonu buradan seçerek önizleyebilirsin" class="absolute -bottom-2 right-2 bg-brickDark hover:bg-brickLight text-patesGold border-2 border-patesGold w-10 h-10 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition transform hover:scale-110">
+                    <i class="fa-solid fa-camera text-sm"></i>
+                    <input type="file" accept="image/*" class="hidden" onchange="previewCustomLogo(event)">
+                </label>
+            </div>
+
+            <!-- Ana Başlık -->
+            <h1 class="font-pixel text-3xl sm:text-5xl md:text-6xl font-bold text-patesGold tracking-wide drop-shadow-[0_4px_0_rgba(0,0,0,0.8)] mb-3">
+                PATES SMP
+            </h1>
+            <p class="font-pixel text-xs sm:text-base text-patesEmerald tracking-[0.25em] uppercase mb-6">
+                SURVIVAL MULTIPLAYER
+            </p>
+            <p class="max-w-2xl mx-auto text-slate-300 text-base sm:text-lg leading-relaxed mb-10">
+                5 farklı dünya, dengeli oyuncu ekonomisi, özel rütbe sistemi ve samimi topluluğuyla gerçek hayatta kalma deneyimine katıl. Kendi krallığını kur, ticaret yap ve maceraya ortak ol!
+            </p>
+
+            <!-- IP Kopyalama Kutusu -->
+            <div class="max-w-xl mx-auto bg-brickBase/95 border-2 border-patesGold rounded-2xl p-3 sm:p-4 shadow-2xl mb-6">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 px-2">
+                        <div class="w-10 h-10 rounded-xl bg-patesGold/15 text-patesGold flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-server text-lg"></i>
+                        </div>
+                        <div class="text-left">
+                            <span class="block text-[11px] uppercase tracking-wider text-slate-400 font-bold">Sunucu IP Adresi</span>
+                            <code id="serverIpDisplay" class="font-mono text-base sm:text-lg font-extrabold text-white tracking-wide select-all">PatesSmpOyna.aternos.me</code>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <button onclick="copyServerIP()" class="btn-gold flex-1 sm:flex-initial px-5 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 cursor-pointer">
+                            <i class="fa-regular fa-copy"></i>
+                            <span>IP Kopyala</span>
+                        </button>
+                        <button onclick="openEditIpModal()" title="IP Adresini Hızlıca Değiştir" class="p-3 rounded-xl bg-brickLight hover:bg-slate-700 text-slate-300 hover:text-patesGold border border-slate-600 transition cursor-pointer">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alt Aksiyon Butonları -->
+            <div class="flex flex-wrap items-center justify-center gap-4">
+                <button onclick="openStartServerModal()" class="btn-emerald px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2.5 cursor-pointer">
+                    <i class="fa-solid fa-power-off text-base"></i>
+                    <span>Sunucuyu Aktif Et</span>
+                </button>
+                <a id="discordLinkBtn" href="https://discord.gg/" target="_blank" rel="noopener noreferrer" class="btn-diamond px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2.5">
+                    <i class="fa-brands fa-discord text-lg"></i>
+                    <span>Discord Topluluğuna Katıl</span>
+                </a>
+                <a href="#ozellikler" class="px-6 py-3 rounded-xl font-bold text-sm bg-brickLight hover:bg-slate-700 text-white border-2 border-slate-600 transition flex items-center gap-2">
+                    <i class="fa-solid fa-compass text-patesGold"></i>
+                    <span>Sunucuyu Keşfet</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SUNUCU ÖZELLİKLERİ BÖLÜMÜ -->
+    <section id="ozellikler" class="py-16 sm:py-24 border-t-2 border-brickLight/80 bg-brickDark/40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-14">
+                <span class="text-xs font-bold uppercase tracking-widest text-patesDiamond bg-patesDiamond/10 border border-patesDiamond/30 px-3.5 py-1 rounded-full">Neden PatesSMP?</span>
+                <h2 class="font-pixel text-2xl sm:text-3xl font-bold text-white mt-4 mb-3">SUNUCU ÖZELLİKLERİ</h2>
+                <p class="text-slate-400 max-w-xl mx-auto text-sm sm:text-base">PaperMC 1.21.1 altyapısı üzerinde akıcı, hilesiz ve özenle hazırlanmış SMP sistemleri.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Kart 1 -->
+                <div class="mc-card rounded-2xl p-6">
+                    <div class="w-12 h-12 rounded-xl bg-patesGold/15 border border-patesGold/40 text-patesGold flex items-center justify-center mb-5 text-xl">
+                        <i class="fa-solid fa-coins"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-white mb-2">Canlı Oyuncu Ekonomisi</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Eşyalarını markette sat, diğer oyuncularla ticaret yap ve biriktirdiğin altınlarla sunucunun en zengin tüccarı ol.
+                    </p>
+                </div>
+
+                <!-- Kart 2 -->
+                <div class="mc-card rounded-2xl p-6">
+                    <div class="w-12 h-12 rounded-xl bg-patesDiamond/15 border border-patesDiamond/40 text-patesDiamond flex items-center justify-center mb-5 text-xl">
+                        <i class="fa-solid fa-earth-americas"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-white mb-2">5 Özel Dünya Sistemi</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Ana hayatta kalma dünyası, kaynak toplama alanları, Nether ve End boyutları arasında kesintisiz ve dengeli geçiş.
+                    </p>
+                </div>
+
+                <!-- Kart 3 -->
+                <div class="mc-card rounded-2xl p-6">
+                    <div class="w-12 h-12 rounded-xl bg-patesEmerald/15 border border-patesEmerald/40 text-patesEmerald flex items-center justify-center mb-5 text-xl">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-white mb-2">Güvenli Bölge Koruması</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Emeklerin her zaman güvende! Evini ve sandıklarını arazi koruma sistemiyle kilitle, izinsiz müdahaleleri engelle.
+                    </p>
+                </div>
+
+                <!-- Kart 4 -->
+                <div class="mc-card rounded-2xl p-6">
+                    <div class="w-12 h-12 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-400 flex items-center justify-center mb-5 text-xl">
+                        <i class="fa-solid fa-crown"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-white mb-2">Özel Rütbeler & Kitler</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Oyun içi ilerlemenle yükselebileceğin rütbeler, günlük başlangıç kitleri ve özel sohbet etiketleriyle farkını göster.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RÜTBELER VE YETKİLİ KADROSU BÖLÜMÜ -->
+    <section id="rutbeler" class="py-16 sm:py-24 border-t-2 border-brickLight/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-14">
+                <span class="text-xs font-bold uppercase tracking-widest text-patesGold bg-patesGold/10 border border-patesGold/30 px-3.5 py-1 rounded-full">Hiyerarşi & Kadro</span>
+                <h2 class="font-pixel text-2xl sm:text-3xl font-bold text-white mt-4 mb-3">YETKİLİ KADROSU & RÜTBELER</h2>
+                <p class="text-slate-400 max-w-xl mx-auto text-sm sm:text-base">Sunucu düzenini sağlayan yönetim ekibimiz ve oyun içi rütbe yapımız.</p>
+            </div>
+
+            <!-- Yetkili Kadrosu Kartları (Kurucu -> Yönetici -> Admin) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <!-- Kurucu -->
+                <div class="mc-card rounded-2xl p-6 border-t-4 border-t-red-500 relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 rounded-lg bg-red-500/15 border border-red-500/40 text-red-400 font-bold text-xs tracking-wider">
+                            [KURUCU]
+                        </span>
+                        <i class="fa-solid fa-chess-king text-red-400 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-extrabold text-white mb-1">Sunucu Sahibi</h3>
+                    <p class="text-xs text-slate-400 mb-4">Tam Yetkili • Altyapı & Geliştirme</p>
+                    <p class="text-sm text-slate-300 leading-relaxed">
+                        Sunucunun genel yönetimi, teknik geliştirmeleri, yeni sezon planlamaları ve topluluk kararlarından sorumludur.
+                    </p>
+                </div>
+
+                <!-- Yönetici (Özel Yıldızlı Tasarım) -->
+                <div class="mc-card rounded-2xl p-6 border-t-4 border-t-patesGold relative overflow-hidden ring-1 ring-patesGold/30">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 rounded-lg bg-patesGold/20 border border-patesGold/50 text-patesGold font-bold text-xs tracking-wider">
+                            [★ YÖNETİCİ ★]
+                        </span>
+                        <i class="fa-solid fa-star text-patesGold text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-extrabold text-white mb-1">Üst Düzey Yönetici</h3>
+                    <p class="text-xs text-patesGold/90 mb-4">Kurucu Yardımcısı • Ekip & Etkinlik Yönetimi</p>
+                    <p class="text-sm text-slate-300 leading-relaxed">
+                        Kurucudan sonraki en yetkili mercidir. Admin ekibini koordine eder, büyük etkinlikleri düzenler ve sunucu düzenini korur.
+                    </p>
+                </div>
+
+                <!-- Admin -->
+                <div class="mc-card rounded-2xl p-6 border-t-4 border-t-patesDiamond relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 rounded-lg bg-patesDiamond/15 border border-patesDiamond/40 text-patesDiamond font-bold text-xs tracking-wider">
+                            [ADMİN]
+                        </span>
+                        <i class="fa-solid fa-gavel text-patesDiamond text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-extrabold text-white mb-1">Oyun İçi Admin</h3>
+                    <p class="text-xs text-slate-400 mb-4">Denetim • Oyuncu Desteği</p>
+                    <p class="text-sm text-slate-300 leading-relaxed">
+                        Oyun içi kural ihlallerini denetler, hile bildirimlerini inceler ve oyuncuların yaşadığı teknik sorunlara destek olur.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Oyuncu Rütbe Bilgilendirme Bandı -->
+            <div class="mc-card rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 bg-gradient-to-r from-brickBase via-brickLight to-brickBase">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-2xl bg-patesEmerald/15 border border-patesEmerald/40 text-patesEmerald flex items-center justify-center text-2xl shrink-0">
+                        <i class="fa-solid fa-gem"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold text-white">Oyuncu & VIP Rütbe Ayrıcalıkları</h4>
+                        <p class="text-sm text-slate-300 mt-1">
+                            Sunucuda aktif kalarak oyun içi parayla rütbe atlayabilir; ekstra `/sethome` hakkı, renkli sohbet ve özel kitlerin kilidini açabilirsin.
+                        </p>
+                    </div>
+                </div>
+                <button onclick="copyServerIP()" class="btn-gold px-6 py-3 rounded-xl font-bold text-sm shrink-0 cursor-pointer">
+                    Hemen Katıl & Başla
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SUNUCU KURALLARI BÖLÜMÜ -->
+    <section id="kurallar" class="py-16 sm:py-24 border-t-2 border-brickLight/80 bg-brickDark/40">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <span class="text-xs font-bold uppercase tracking-widest text-patesEmerald bg-patesEmerald/10 border border-patesEmerald/30 px-3.5 py-1 rounded-full">Adil Oyun</span>
+                <h2 class="font-pixel text-2xl sm:text-3xl font-bold text-white mt-4 mb-3">SUNUCU KURALLARI</h2>
+                <p class="text-slate-400 text-sm sm:text-base">Herkesin keyifli vakit geçirmesi için sunucuya giren tüm oyuncular bu kuralları kabul etmiş sayılır.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="mc-card rounded-xl p-5 flex items-start gap-4">
+                    <span class="w-8 h-8 rounded-lg bg-red-500/20 text-red-400 font-pixel text-sm flex items-center justify-center shrink-0 mt-0.5">1</span>
+                    <div>
+                        <h3 class="font-bold text-white text-base">Hile, X-Ray ve Üçüncü Parti Yazılımlar Yasaktır</h3>
+                        <p class="text-sm text-slate-400 mt-1">KillAura, Fly, X-Ray doku paketleri veya haksız avantaj sağlayan makroların kullanımı kalıcı yasaklanma sebebidir.</p>
+                    </div>
+                </div>
+
+                <div class="mc-card rounded-xl p-5 flex items-start gap-4">
+                    <span class="w-8 h-8 rounded-lg bg-patesGold/20 text-patesGold font-pixel text-sm flex items-center justify-center shrink-0 mt-0.5">2</span>
+                    <div>
+                        <h3 class="font-bold text-white text-base">Saygılı İletişim ve Sohbet Düzeni</h3>
+                        <p class="text-sm text-slate-400 mt-1">Sohbette küfür, hakaret, ayrımcılık, spam veya başka sunucuların reklamını yapmak kesinlikle yasaktır.</p>
+                    </div>
+                </div>
+
+                <div class="mc-card rounded-xl p-5 flex items-start gap-4">
+                    <span class="w-8 h-8 rounded-lg bg-patesDiamond/20 text-patesDiamond font-pixel text-sm flex items-center justify-center shrink-0 mt-0.5">3</span>
+                    <div>
+                        <h3 class="font-bold text-white text-base">Claim (Koruma) Tuzakları ve Griefing Kuralları</h3>
+                        <p class="text-sm text-slate-400 mt-1">Oyuncuları ışınlanma tuzağına (TP Trap) çekmek veya koruma sınırlarının etrafını kasıtlı olarak bozmak yasaktır.</p>
+                    </div>
+                </div>
+
+                <div class="mc-card rounded-xl p-5 flex items-start gap-4">
+                    <span class="w-8 h-8 rounded-lg bg-patesEmerald/20 text-patesEmerald font-pixel text-sm flex items-center justify-center shrink-0 mt-0.5">4</span>
+                    <div>
+                        <h3 class="font-bold text-white text-base">Hata (Bug) Kullanımı ve Bildirimi</h3>
+                        <p class="text-sm text-slate-400 mt-1">Oyun veya eklenti açıklarından yararlanarak eşya/para kopyalamak yasaktır. Açık bulan oyuncular Yönetici veya Kurucu'ya bildirmelidir.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER (ALT BİLGİ) -->
+    <footer class="bg-brickDark border-t-2 border-brickLight py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-3">
+                <img src="logo.png" alt="PatesSMP" class="site-logo w-10 h-10 rounded-full border border-patesGold object-cover" onerror="handleLogoFallback(this)">
+                <div>
+                    <p class="font-pixel text-sm text-patesGold">PATES SMP</p>
+                    <p class="text-xs text-slate-500">Mojang Studios ile resmi bir bağlantısı yoktur.</p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center gap-4 text-xs font-semibold">
+                <button onclick="openEditIpModal()" class="text-slate-400 hover:text-patesGold transition cursor-pointer">
+                    <i class="fa-solid fa-gear mr-1"></i> IP Ayarını Düzenle
+                </button>
+                <span class="text-slate-700">•</span>
+                <a href="https://www.youtube.com/@PatesSmp" target="_blank" rel="noopener noreferrer" class="text-red-400 hover:text-red-300 hover:underline flex items-center gap-1.5">
+                    <i class="fa-brands fa-youtube text-sm"></i> Kanalımıza Abone Ol
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL 1: HIZLI IP DEĞİŞTİRME PENCERESİ -->
+    <div id="editIpModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-brickBase border-2 border-patesGold rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-pixel text-base text-patesGold">SUNUCU IP DEĞİŞTİR</h3>
+                <button onclick="closeModal('editIpModal')" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <p class="text-xs text-slate-300 mb-4 leading-relaxed">
+                Mango Host veya yeni bir IP adresine geçtiğinde buradan anında önizleyebilirsin. Kalıcı olması için HTML dosyasının en üstündeki <code class="text-patesGold">SERVER_CONFIG</code> kısmına yeni IP'yi yazman yeterlidir.
+            </p>
+            <label class="block text-xs font-bold text-slate-400 uppercase mb-1.5">Yeni Sunucu IP Adresi</label>
+            <input id="newIpInput" type="text" placeholder="Örn: play.patessmp.net" class="w-full bg-brickDark border border-slate-600 focus:border-patesGold rounded-xl px-4 py-2.5 text-sm text-white outline-none mb-4 font-mono">
+            <div class="flex justify-end gap-2">
+                <button onclick="closeModal('editIpModal')" class="px-4 py-2 rounded-xl text-xs font-bold bg-brickLight text-slate-300 hover:text-white">İptal</button>
+                <button onclick="applyNewIp()" class="btn-gold px-5 py-2 rounded-xl text-xs font-bold cursor-pointer">IP'yi Güncelle</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: SUNUCUYU AKTİF ETME PENCERESİ -->
+    <div id="startServerModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-brickBase border-2 border-patesEmerald rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-patesEmerald/20 text-patesEmerald flex items-center justify-center">
+                        <i class="fa-solid fa-power-off"></i>
+                    </div>
+                    <h3 class="font-pixel text-base text-patesEmerald">SUNUCUYU AKTİF ET</h3>
+                </div>
+                <button onclick="closeModal('startServerModal')" class="text-slate-400 hover:text-white text-lg cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            <!-- MODAL 2: SUNUCUYU AKTİF ETME PENCERESİ -->
+            <p class="text-sm text-slate-200 mb-3 leading-relaxed">
+                Siteye girmek veya sunucuyu aktif etmek için <strong>hiçbir hesap girişi yapmana gerek yoktur.</strong> Oyuncular yalnızca sunucuyu başlatma isteği gönderir; <strong>sunucu ayarlarına, dosyalara veya konsola erişemezler.</strong>
+            </p>
+            <div class="bg-brickDark border border-slate-700 rounded-xl p-3.5 mb-5 text-xs text-slate-300 space-y-1.5">
+                <p><i class="fa-solid fa-shield-halved text-patesEmerald mr-1.5"></i> <strong>Girişsiz & Güvenli Erişim:</strong></p>
+                <p>• Ziyaretçilerden site içi giriş veya panel hesabı istenmez; IP adresi tek tıkla kopyalanır.</p>
+                <p>• Sunucu ayarları, eklentiler ve konsol yalnızca sende kalır; oyuncular hiçbir ayarı değiştiremez.</p>
+            </div>
+            <div class="flex flex-col sm:flex-row justify-end gap-2.5">
+                <button onclick="closeModal('startServerModal')" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-brickLight text-slate-300 hover:text-white cursor-pointer">Kapat</button>
+                <button id="startServerActionBtn" type="button" onclick="handleDirectServerStart()" class="btn-emerald px-5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-rocket"></i>
+                    <span>Giriş Yapmadan Başlat & IP Kopyala</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Varsayılan taçlı patates SVG yedeği (logo.png klasörde henüz yoksa kırık resim yerine şık amblem gösterir)
+        const FALLBACK_LOGO_SVG = `data:image/svg+xml;utf8,` + encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                <defs>
+                    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#38bdf8"/>
+                        <stop offset="100%" stop-color="#1e222a"/>
+                    </radialGradient>
+                </defs>
+                <circle cx="100" cy="100" r="96" fill="url(#bg)" stroke="#f5b942" stroke-width="8"/>
+                <rect x="68" y="65" width="64" height="82" rx="28" fill="#d99b52" stroke="#5c3a14" stroke-width="5"/>
+                <polygon points="75,65 82,45 100,58 118,45 125,65" fill="#f5b942" stroke="#5c3a14" stroke-width="4"/>
+                <circle cx="88" cy="96" r="5" fill="#16191f"/>
+                <circle cx="112" cy="96" r="5" fill="#16191f"/>
+                <path d="M94 106 Q100 112 106 106" stroke="#16191f" stroke-width="4" fill="none" stroke-linecap="round"/>
+                <text x="100" y="172" font-family="monospace" font-weight="bold" font-size="18" fill="#f5b942" text-anchor="middle">PATES SMP</text>
+            </svg>
+        `);
+
+        function handleLogoFallback(imgElement) {
+            if (!imgElement.dataset.fallbackApplied) {
+                imgElement.dataset.fallbackApplied = "true";
+                imgElement.src = FALLBACK_LOGO_SVG;
+            }
+        }
+
+        // Kullanıcının seçtiği yerel logo dosyasını sayfada anında önizleme
+        function previewCustomLogo(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.querySelectorAll('.site-logo').forEach(img => {
+                    img.src = e.target.result;
+                });
+                showToast("Logo Önizlemesi Güncellendi!", "Kendi logon başarıyla sayfaya uygulandı.");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Sayfa açılışında SERVER_CONFIG değerlerini uygula
+        function initSiteConfig() {
+            document.getElementById('serverIpDisplay').textContent = SERVER_CONFIG.serverIP;
+            document.getElementById('displayVersion').textContent = SERVER_CONFIG.serverVersion;
+            const discordBtn = document.getElementById('discordLinkBtn');
+            if (discordBtn && SERVER_CONFIG.discordInvite) {
+                discordBtn.href = SERVER_CONFIG.discordInvite;
+            }
+            const startLink = document.getElementById('startServerExternalLink');
+            if (startLink && SERVER_CONFIG.serverStartUrl) {
+                startLink.href = SERVER_CONFIG.serverStartUrl;
+            }
+            checkServerStatus(SERVER_CONFIG.serverIP);
+        }
+
+        // Canlı Minecraft Sunucu Durumu Kontrolü (mcstatus.io API)
+        async function checkServerStatus(ip) {
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+            try {
+                const res = await fetch(`https://api.mcstatus.io/v2/status/java/${encodeURIComponent(ip)}`);
+                if (!res.ok) throw new Error("API yanıt vermedi");
+                const data = await res.json();
+                if (data.online) {
+                    dot.className = "w-2.5 h-2.5 rounded-full bg-patesEmerald animate-pulse";
+                    const online = data.players?.online ?? 0;
+                    const max = data.players?.max ?? 20;
+                    text.textContent = `Sunucu Aktif • ${online}/${max} Oyuncu Çevrimiçi`;
+                } else {
+                    dot.className = "w-2.5 h-2.5 rounded-full bg-patesGold";
+                    text.textContent = "Sunucu Beklemede (Başlatılmaya Hazır)";
+                }
+            } catch (err) {
+                dot.className = "w-2.5 h-2.5 rounded-full bg-patesEmerald";
+                text.textContent = "PatesSMP • Maceraya Hazır";
+            }
+        }
+
+        // Tek Tıkla IP Kopyalama (iFrame uyumlu fallback dahil)
+        function copyServerIP() {
+            const ip = document.getElementById('serverIpDisplay').textContent.trim();
+            const tempInput = document.createElement('input');
+            tempInput.value = ip;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            tempInput.setSelectionRange(0, 99999);
+            try {
+                document.execCommand('copy');
+                showToast("IP Adresi Kopyalandı!", `${ip} panoya kopyalandı.`);
+            } catch (e) {
+                showToast("IP Adresi:", ip);
+            }
+            document.body.removeChild(tempInput);
+        }
+
+        // Bildirim Toast Gösterimi
+        let toastTimeout;
+        function showToast(title, message) {
+            const toast = document.getElementById('toastNotification');
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            }, 10);
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => toast.classList.add('hidden'), 300);
+            }, 3200);
+        }
+
+        // Mobil Menü ve Modallar
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        }
+
+        function openEditIpModal() {
+            document.getElementById('newIpInput').value = document.getElementById('serverIpDisplay').textContent.trim();
+            document.getElementById('editIpModal').classList.remove('hidden');
+        }
+
+        function openStartServerModal() {
+            document.getElementById('startServerModal').classList.remove('hidden');
+        }
+
+        // Hesap giriş ekranına yönlendirmeden sunucu durumunu yeniler ve IP'yi kopyalar
+        function handleDirectServerStart() {
+            copyServerIP();
+            closeModal('startServerModal');
+            if (SERVER_CONFIG.serverStartUrl && SERVER_CONFIG.serverStartUrl.trim() !== "") {
+                window.open(SERVER_CONFIG.serverStartUrl, "_blank", "noopener,noreferrer");
+                showToast("Başlatma Bağlantısı Açıldı!", "IP adresi kopyalandı, sunucu durumu kontrol ediliyor.");
+            } else {
+                showToast("Giriş Yapılmadan Aktif Etme İsteği Gönderildi!", "IP kopyalandı, sunucu durumu kontrol ediliyor.");
+            }
+            setTimeout(() => checkServerStatus(SERVER_CONFIG.serverIP), 2500);
+        }
+
+        function triggerServerStartToast() {
+            closeModal('startServerModal');
+            showToast("Başlatma Sayfası Açıldı!", "Açılan sekmeden sunucuyu başlatabilirsin.");
+            setTimeout(() => checkServerStatus(SERVER_CONFIG.serverIP), 5000);
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function applyNewIp() {
+            const val = document.getElementById('newIpInput').value.trim();
+            if (!val) return;
+            SERVER_CONFIG.serverIP = val;
+            document.getElementById('serverIpDisplay').textContent = val;
+            closeModal('editIpModal');
+            checkServerStatus(val);
+            showToast("IP Adresi Güncellendi!", `Yeni IP: ${val}`);
+        }
+
+        window.addEventListener('DOMContentLoaded', initSiteConfig);
+    </script>
+</body>
+</html>
